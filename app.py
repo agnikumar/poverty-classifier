@@ -8,6 +8,8 @@ from flask import render_template, redirect
 from flask import request, url_for, render_template, redirect
 import io
 import tensorflow as tf
+#import boto3 # for reading model weights from AWS
+
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -27,7 +29,17 @@ def load_model():
     #model = tf.keras.models.load_model('model.h5')
     with open('model/model.json', 'r') as f:
         model = model_from_json(f.read())
+    # loading model weights
+    #client = boto3.client('s3') #low-level functional API
+    #resource = boto3.resource('s3') #high-level object-oriented API
+    #my_bucket = resource.Bucket('poverty-classifier-assets') 
+    #obj = client.get_object(Bucket='poverty-classifier-assets', Key='weights.hdf5')
+    #model.load_weights('s3://poverty-classifier-assets/weights.hdf5')
     model.load_weights('model/weights.hdf5')
+
+load_model()
+global graph
+graph = tf.compat.v1.get_default_graph()
 
 def prepare_image(image, target):
     # if the image mode is not RGB, convert it
@@ -124,9 +136,9 @@ def predict():
 if __name__ == "__main__":
     print(("* Loading Keras model and Flask starting server..."
         "please wait until server has fully started.(60sec)"))
-    load_model()
-    global graph
-    #graph = tf.get_default_graph()
-    graph = tf.compat.v1.get_default_graph()
+    #load_model()
+    #global graph
+    #graph = tf.get_default_graph(), outdated
+    #graph = tf.compat.v1.get_default_graph()
     app.run(debug=True)
 
