@@ -9,7 +9,7 @@ from flask import request, url_for, render_template, redirect
 import io
 import tensorflow as tf
 #import boto3 # for reading model weights from AWS
-import pandas as pd
+#import pandas as pd
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
