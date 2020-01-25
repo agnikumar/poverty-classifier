@@ -8,7 +8,7 @@ from flask import render_template, redirect
 from flask import request, url_for, render_template, redirect
 import io
 import tensorflow as tf
-#import boto3 # for reading model weights from AWS
+import boto3 # for reading model weights from AWS
 #import pandas as pd
 
 import os
@@ -20,6 +20,43 @@ model = None
 
 UPLOAD_FOLDER = os.path.join(app.root_path ,'static','img')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+'''
+# routing to appropriate S3 file
+@app.route('/s3/<path:path>')
+def s3_file():
+    return redirect('https://poverty-classifier-assets.s3.amazonaws.com/weights.hdf5', code=301)
+'''
+
+'''
+global STATIC_URL 
+STATIC_URL = 'https://poverty-classifier-assets.s3.amazonaws.com/weights.hdf5'
+@app.context_processor
+def inject_static_url():
+    """
+    Inject the variable 'static_url' into the templates. Grab it from
+    the environment variable STATIC_URL, or use the default.
+
+    Template variable will always have a trailing slash.
+
+    """
+    static_url = os.environ.get('STATIC_URL', app.static_url_path)
+    #if not static_url.endswith('/'):
+    #    static_url += '/'
+    return dict(
+        static_url=static_url
+    )
+'''
+
+def download_file(file_name, bucket):
+    """
+    Function to download a given file from an S3 bucket
+    """
+    s3 = boto3.resource('s3')
+    output = f"file_name"
+    s3.Bucket(bucket).download_file(file_name, output)
+    return output
+
 
 def load_model():
     # load the pre-trained Keras model (here we are using a model
@@ -36,7 +73,11 @@ def load_model():
     #my_bucket = resource.Bucket('poverty-classifier-assets') 
     #obj = client.get_object(Bucket='poverty-classifier-assets', Key='weights.hdf5')
     
-    weights_file = 'https://poverty-classifier-assets.s3.amazonaws.com/weights.hdf5'
+    #weights_file = 'https://poverty-classifier-assets.s3.amazonaws.com/weights.hdf5'
+    #weights_file = s3_file()
+    #weights_file = inject_static_url()
+    #print("-----------------", weights_file)
+    weights_file = download_file('weights.hdf5', 'poverty-classifier-assets')
     model.load_weights(weights_file)
     #print(type(weights_file))
     #model.load_weights('s3://poverty-classifier-assets/weights.hdf5')
