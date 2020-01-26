@@ -29,6 +29,10 @@ def load_model():
         model = model_from_json(f.read())
     model.load_weights('model/weights.hdf5')
 
+load_model()
+global graph
+graph = tf.compat.v1.get_default_graph()
+
 def prepare_image(image, target):
     # if the image mode is not RGB, convert it
     if image.mode != "RGB":
@@ -124,9 +128,9 @@ def predict():
 if __name__ == "__main__":
     print(("* Loading Keras model and Flask starting server..."
         "please wait until server has fully started.(60sec)"))
-    load_model()
-    global graph
-    #graph = tf.get_default_graph()
-    graph = tf.compat.v1.get_default_graph()
+    #load_model()
+    #global graph
+    #graph = tf.get_default_graph(), outdated
+    #graph = tf.compat.v1.get_default_graph()
     app.run(debug=True)
 
