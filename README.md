@@ -6,7 +6,6 @@ Sample images are provided for exploring. The app is hosted online here: <https:
 ## Run locally
 * Clone the repository.
 * `pip install -r requirements.txt`
-## Run
 * `python app.py`
 * Open up a browser and go to `localhost:5000`.
 * Upload and submit a daytime satellite image.
